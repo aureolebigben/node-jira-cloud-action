@@ -27297,6 +27297,12 @@ async function run() {
       case 'get_issue':
         response = await getIssue(client, baseUrl, headers);
         break
+      case 'get_project':
+        response = await getProject(client, baseUrl, headers);
+        break
+      case 'create_version':
+        response = await createVersion(client, baseUrl, headers);
+        break
       default:
         throw new Error(`Unsupported operation: ${operation}`)
     }
@@ -27574,10 +27580,102 @@ async function getIssue(client, baseUrl, headers) {
 }
 
 /**
+ * Gets project information from Jira by project key
+ *
+ * @param {HttpClient} client - The HTTP client
+ * @param {string} baseUrl - The Jira base URL
+ * @param {object} headers - The request headers
+ * @returns {Promise<object>} The response data
+ */
+async function getProject(client, baseUrl, headers) {
+  const projectKey = coreExports.getInput('project_key', { required: true });
+
+  // Make API request
+  const url = `${baseUrl}/rest/api/3/project/${projectKey}`;
+  coreExports.debug(`Getting project with URL: ${url}`);
+
+  const response = await client.getJson(url, headers);
+
+  // Check response
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    throw new Error(
+      `Failed to get project: ${response.statusCode} ${JSON.stringify(response.result)}`
+    )
+  }
+
+  return {
+    data: response.result
+  }
+}
+
+/**
+ * Creates a version in Jira
+ *
+ * @param {HttpClient} client - The HTTP client
+ * @param {string} baseUrl - The Jira base URL
+ * @param {object} headers - The request headers
+ * @returns {Promise<object>} The response data
+ */
+async function createVersion(client, baseUrl, headers) {
+  const projectId = coreExports.getInput('project_id', { required: true });
+  const versionName = coreExports.getInput('version_name', { required: true });
+  const description = coreExports.getInput('version_description');
+  const archived = coreExports.getInput('version_archived') === 'true';
+  const released = coreExports.getInput('version_released') === 'true';
+  const startDate = coreExports.getInput('version_start_date');
+  const releaseDate = coreExports.getInput('version_release_date');
+
+  // Prepare request body
+  const body = {
+    name: versionName,
+    projectId: projectId
+  };
+
+  // Add optional fields if provided
+  if (description) {
+    body.description = description;
+  }
+
+  if (archived !== undefined) {
+    body.archived = archived;
+  }
+
+  if (released !== undefined) {
+    body.released = released;
+  }
+
+  if (startDate) {
+    body.startDate = startDate;
+  }
+
+  if (releaseDate) {
+    body.releaseDate = releaseDate;
+  }
+
+  // Make API request
+  const url = `${baseUrl}/rest/api/3/version`;
+  coreExports.debug(`Creating version with URL: ${url}`);
+  coreExports.debug(`Request body: ${JSON.stringify(body)}`);
+
+  const response = await client.postJson(url, body, headers);
+
+  // Check response
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    throw new Error(
+      `Failed to create version: ${response.statusCode} ${JSON.stringify(response.result)}`
+    )
+  }
+
+  return {
+    data: response.result
+  }
+}
+
+/**
  * The entrypoint for the action. This file simply imports and runs the action's
  * main logic.
  */
 
 /* istanbul ignore next */
-run();
+run().then(() => {});
 //# sourceMappingURL=index.js.map
