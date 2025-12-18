@@ -5,4 +5,7 @@
 import { run } from './main.js'
 
 /* istanbul ignore next */
-run().then(() => {})
+run().catch(error => {
+  console.error(error)
+  process.exitCode = 1
+})
