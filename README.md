@@ -212,6 +212,36 @@ steps:
       echo "Response: ${{ steps.get-project.outputs.response }}"
 ```
 
+## Initial Setup
+
+After you've cloned the repository to your local machine or codespace, you'll
+need to perform some initial setup steps before you can develop your action.
+
+1. :hammer_and_wrench: Install the dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. :building_construction: Package the JavaScript for distribution
+
+   ```bash
+   npm run bundle
+   ```
+
+3. :white_check_mark: Run the tests
+
+   ```bash
+   $ npm test
+
+   PASS  ./index.test.js
+     ✓ throws invalid number (3ms)
+     ✓ wait 500 ms (504ms)
+     ✓ test runs (95ms)
+
+   ...
+   ```
+
 ## Local Testing
 
 You can test this action locally using the
