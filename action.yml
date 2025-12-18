@@ -1,23 +1,96 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: node-jira-cloud-action
+description: GitHub Actions to communicate with Jira Cloud
+author: aureolebigben
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: heart
-  color: red
+  icon: check-circle
+  color: blue
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  jira_base_url:
+    description:
+      'Jira Cloud instance URL (e.g., https://your-domain.atlassian.net)'
     required: true
-    default: '1000'
+  jira_email:
+    description: 'Email address associated with your Jira Cloud account'
+    required: true
+  jira_api_token:
+    description: 'Jira Cloud API token'
+    required: true
+  operation:
+    description:
+      'Operation to perform (create_issue, update_issue, transition_issue,
+      add_comment, get_issue, create_version)'
+    required: true
+  project_key:
+    description: 'Jira project key (required for create_issue operation)'
+    required: false
+  issue_key:
+    description:
+      'Jira issue key (required for update_issue, transition_issue, add_comment,
+      get_issue operations)'
+    required: false
+  issue_type:
+    description: 'Issue type (required for create_issue operation)'
+    required: false
+  summary:
+    description: 'Issue summary/title (required for create_issue operation)'
+    required: false
+  description:
+    description:
+      'Issue description (optional for create_issue and update_issue operations)'
+    required: false
+  transition_id:
+    description: 'Transition ID (required for transition_issue operation)'
+    required: false
+  comment:
+    description: 'Comment text (required for add_comment operation)'
+    required: false
+  fields_json:
+    description:
+      'JSON string containing additional fields to set (optional for
+      create_issue and update_issue operations)'
+    required: false
+  project_id:
+    description: 'Project ID (required for create_version operation)'
+    required: false
+  version_name:
+    description: 'Version name (required for create_version operation)'
+    required: false
+  version_description:
+    description: 'Version description (optional for create_version operation)'
+    required: false
+  version_archived:
+    description:
+      'Whether the version is archived (optional for create_version operation,
+      default: false)'
+    required: false
+  version_released:
+    description:
+      'Whether the version is released (optional for create_version operation,
+      default: false)'
+    required: false
+  version_start_date:
+    description:
+      'The start date of the version (optional for create_version operation)'
+    required: false
+  version_release_date:
+    description:
+      'The release date of the version (optional for create_version operation)'
+    required: false
 
 # Define your outputs here.
 outputs:
-  time:
-    description: Your output description here
+  issue_key:
+    description: 'The key of the created or updated Jira issue'
+  issue_id:
+    description: 'The ID of the created or updated Jira issue'
+  status:
+    description: 'The status of the operation (success or error)'
+  response:
+    description: 'The full response from the Jira API (JSON string)'
 
 runs:
   using: node20
